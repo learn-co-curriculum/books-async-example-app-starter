@@ -1,90 +1,77 @@
-const makeHTML = (book) => {
-  const div = document.createElement('div')
+// Google Books API docs:
+// https://developers.google.com/books/docs/v1/using
+// Here is an example using a search term
+// const baseUrl = 'https://www.googleapis.com/books/v1/volumes?q='
 
-  div.className = "item"
+// Here is an example of searching an author
+//GET https://www.googleapis.com/books/v1/volumes?q=inauthor:pynchon
 
-  div.innerHTML = `
-    <i class="large book middle aligned icon"></i>
-    <div class="content">
-      <a class="header" href="/">${book.volumeInfo.title}</a>
-      <div class="description">
-        ${book.volumeInfo.authors[0]}
-      </div>
-    </div>
-  `
-
-  return div
+const app = {
+  indexView: true
 }
 
-
-const simpleGet = (url) => {
-  return new Promise((resolve) => {
-    const req = new XMLHttpRequest()
-
-    req.open('GET', url)
-
-    req.onload = function() {
-      resolve(JSON.parse(this.responseText))
-    }
-
-    req.send()
+function appendBooks(response) {
+  response.items.forEach((bookData) => {
+    const book = new Book(bookData.volumeInfo)
+    app.list.appendChild(book.renderListItem())
   })
-
 }
+
+function search(ev) {
+  ev.preventDefault()
+  const term = ev.target.querySelector('input').value
+
+  app.indexView = true
+  app.list.innerHTML = ''
+  app.show.innerHTML = ''
+  Book.all = []
+  ev.target.querySelector('input').value = ''
+
+  adapter = new Adapter(term)
+  adapter.fetchBooks()
+    .then(appendBooks)
+}
+
+
+
+function showBook(title) {
+  app.indexView = false
+  app.list.innerHTML = ''
+  app.show.innerHTML = ''
+
+  const book = Book.findByTitle(title)
+
+  app.show.appendChild(book.renderCard())
+}
+
 
 
 
 document.addEventListener('DOMContentLoaded', function(){
-  // Google Books API docs:
-  // https://developers.google.com/books/docs/v1/using
-  // Here is an example using a search term
-  const baseUrl = 'https://www.googleapis.com/books/v1/volumes?q='
+  app.form = document.querySelector('form.ui.form')
+  app.list = document.querySelector('div.ui.relaxed.divided.list')
+  app.show = document.querySelector('div.book.show')
 
-  // Here is an example of searching an author
-  //GET https://www.googleapis.com/books/v1/volumes?q=inauthor:pynchon
+  // form submit event
+  app.form.addEventListener('submit', search)
 
-  let data
-
-  const form = document.querySelector('form.ui.form')
-  const list = document.querySelector('div.ui.relaxed.divided.list')
-
-
-  const addToDOM = function(){
-    console.log('this happens second')
-
-    data = JSON.parse(this.responseText)
-    // take that response
-
-
-    // and add elements to the DOM
-    data.items.forEach((book) => {
-      const bookNode = makeHTML(book)
-      list.appendChild(bookNode)
-    })
-  }
-
-
-  form.addEventListener('submit', (ev) => {
+  // book click event (event delegation with vanilla js)
+  app.list.addEventListener('click', (ev) => {
     ev.preventDefault()
-    list.innerHTML = ''
+    const clickedEl = ev.target
+    if (clickedEl.className === 'header') {
+      showBook(clickedEl.innerText)
+    }
+  })
 
-    const val = ev.target.querySelector('input').value
-    ev.target.querySelector('input').value = ''
+  // scroll to bottom event
+  document.addEventListener('scroll', (ev) => {
+    if (app.indexView && document.body.scrollHeight == Math.floor(document.body.scrollTop + window.innerHeight)) {
 
-    // make a request to the books API
-    const url = `${baseUrl}${val}`
-
-    var response = simpleGet(url, addToDOM)
-
-    response.then(function(resp){
-      resp.items.forEach((book) => {
-        const bookNode = makeHTML(book)
-        list.appendChild(bookNode)
-      })
-    })
-
-    console.log('this happens first')
-
+      adapter.incrementStartIndex()
+      adapter.fetchBooks()
+        .then(appendBooks)
+    }
   })
 
 })
