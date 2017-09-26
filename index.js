@@ -31,11 +31,11 @@ function findBook(ev) {
 
   if (clickedEl.className === 'header') {
     app.indexView = false
-    list.innerHTML = ''
-    show.innerHTML = ''
+    app.list.innerHTML = ''
+    app.show.innerHTML = ''
 
     const book = Book.findByTitle(clickedEl.innerText)
-    show.appendChild(book.renderCard())
+    app.show.appendChild(book.renderCard())
   }
 }
 
