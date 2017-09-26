@@ -4,10 +4,10 @@ class Adapter {
   }
 
   fetchBooks() {
-    const url = `${Adapter.baseUrl}${this.term}`
+    const url = `${Adapter.baseUrl}?q=${this.term}`
     return fetch(url).then((res) => res.json())
   }
 }
 
-Adapter.baseUrl = 'https://www.googleapis.com/books/v1/volumes?q='
+Adapter.baseUrl = 'https://www.googleapis.com/books/v1/volumes'
 Adapter.maxResults = 10

@@ -4,13 +4,13 @@ class Book {
     this.description = attr.description
     this.author = attr.authors ? attr.authors[0] : 'Unknown'
     this.pages = attr.pageCount
-    this.imageUrl = attr.imageLinks.thumbnail
+    this.imageUrl = attr.imageLinks ? attr.imageLinks.thumbnail : ''
 
     Book.all.push(this)
   }
 
   static findByTitle(title) {
-    return this.all.find((book) => book.title === title)
+    return this.all.find(book => book.title === title)
   }
 
   renderListItem() {

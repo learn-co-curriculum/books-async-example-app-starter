@@ -3,6 +3,22 @@ let list
 let show
 let adapter
 
+document.addEventListener('DOMContentLoaded', function(){
+  form = document.querySelector('form.ui.form')
+  list = document.querySelector('div.ui.relaxed.divided.list')
+  show = document.querySelector('div.book.show')
+
+  // form submit event
+  form.addEventListener('submit', searchBooks)
+
+  // book click event (event delegation with vanilla js)
+  list.addEventListener('click', findBook)
+
+  // scroll to bottom event
+  document.addEventListener('scroll', loadBooks)
+
+})
+
 function appendBooks(response) {
   response.items.forEach((bookData) => {
     const book = new Book(bookData.volumeInfo)
@@ -42,21 +58,3 @@ function loadBooks(ev) {
     console.log('bottom')
   }
 }
-
-
-
-document.addEventListener('DOMContentLoaded', function(){
-  form = document.querySelector('form.ui.form')
-  list = document.querySelector('div.ui.relaxed.divided.list')
-  show = document.querySelector('div.book.show')
-
-  // form submit event
-  form.addEventListener('submit', searchBooks)
-
-  // book click event (event delegation with vanilla js)
-  list.addEventListener('click', findBook)
-
-  // scroll to bottom event
-  document.addEventListener('scroll', loadBooks)
-
-})
