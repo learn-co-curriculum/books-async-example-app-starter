@@ -1,6 +1,7 @@
 let form
 let list
 let show
+let adapter
 
 function appendBooks(response) {
   response.items.forEach((bookData) => {
