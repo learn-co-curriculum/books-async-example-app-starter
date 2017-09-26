@@ -1,15 +1,10 @@
 class Adapter {
   constructor(term) {
     this.term = term
-    this.startIndex = 0
-  }
-
-  incrementStartIndex() {
-    this.startIndex += Adapter.maxResults
   }
 
   fetchBooks() {
-    const url = `${Adapter.baseUrl}${this.term}&startIndex=${this.startIndex}`
+    const url = `${Adapter.baseUrl}${this.term}`
     return fetch(url).then((res) => res.json())
   }
 }
