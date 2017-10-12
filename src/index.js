@@ -3,7 +3,6 @@ const fetchBooks = () => data.books;
 document.addEventListener('DOMContentLoaded', function() {
   const books = fetchBooks();
   const list = document.querySelector('.ui.relaxed.divided.list');
-  const show = document.querySelector('.show-book');
   const form = document.querySelector('form.ui.form');
 
   books.forEach(bookData => {
@@ -27,10 +26,10 @@ document.addEventListener('DOMContentLoaded', function() {
     const clicked = ev.target;
     if (clicked.className === 'header') {
       ev.preventDefault();
-      show.innerHTML = '';
+      list.innerHTML = '';
 
       const book = Book.find(clicked.dataset.id);
-      show.appendChild(book.renderCard());
+      list.appendChild(book.renderCard());
     }
   });
 });
@@ -74,8 +73,26 @@ class Book {
 
   renderCard() {
     const div = document.createElement('div');
+    div.className = 'ui fluid card';
     div.innerHTML = `
-      
+      <div class="image">
+        <img src="${this.imageLink}"/>
+      </div>
+      <div class="content">
+        <h1 class="ui header">
+          ${this.title}
+          <div class='sub header'>
+            ${this.author}
+          </div>
+        </h1>
+        <div class="meta">
+          <span>${this.pages} pages</span>
+        </div>
+        <div class="ui divider"></div>
+        <div class="description">
+          ${this.description}
+        </div>
+      </div>
     `;
     return div;
   }
